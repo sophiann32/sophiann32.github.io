@@ -122,15 +122,32 @@
             window.speechSynthesis.speak(speech);
         }
 
+        function PhoneTextToSpeech (message){
+           // html 태그 제거
+            // HTML 태그를 제거하기 위해 임시적으로 DOM을 생성합니다.
+            const temporaryElement = $('<div></div>').html(message);
+
+            // p 태그를 모두 찾아내어 제거합니다.
+            temporaryElement.find('p').remove();
+
+            // br 태그를 모두 찾아내어 제거합니다.
+            temporaryElement.find('br').remove();
+
+            // innerText를 사용하여 HTML 태그를 제거한 텍스트를 가져옵니다.
+            const cleanedMessage = temporaryElement.text();
+            textToSpeech(cleanedMessage);
+
+        }
+
+
 
         // 메세지를 화면에 추가
         function appendMessage(sender, message) {
             const messageElement = $('<div></div>').html(`<p><strong>${sender}:</strong> ${message}`);
             chatContainer.append(messageElement);
             chatContainer.scrollTop(chatContainer.prop('scrollHeight'));
-
             if (ttsEnabled) {
-                textToSpeech(message);
+                PhoneTextToSpeech(message);
             }
         }
 
@@ -247,7 +264,7 @@
                 for (let i = 0; i < category.level2.length; i++) {
                     // 서브메뉴 메세지를 하나로 만든다.
                     // chatContainer.append(`${category.level2[i].number}. ${category.level2[i].name}<br>`);
-                    //message = message + '신규문자';
+                    // message = message + '신규문자';
                     // message +='신규문자';
                     message +=`${category.level2[i].number}. ${category.level2[i].name}<br>`;
                 }
@@ -255,7 +272,7 @@
                 chatContainer.append(message);
                 // 하나의 메세지에 음성 서비스 제공한다.
                 if (ttsEnabled){
-                    textToSpeech(message);
+                    PhoneTextToSpeech(message);
                 }
                 chatContainer.scrollTop(chatContainer.prop('scrollHeight'));
             }, 500);
